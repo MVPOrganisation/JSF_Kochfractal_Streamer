@@ -38,18 +38,18 @@ public class Main {
 
         TimeStamp text = new TimeStamp();
         text.setBegin("Starting text no buffer");
-        ew.writeToTextFile(null, false, "NoBuf.txt");
+        ew.writeToTextFile(null, false, ("NoBuf_Level_" + Integer.toString(kf.getLevel()) + ".txt"));
         text.setEndBegin("Finished text no buffer, starting text buffer");
-        ew.writeToTextFile(null, true, "WithBuf.txt");
+        ew.writeToTextFile(null, true, ("WithBuf_Level_" + Integer.toString(kf.getLevel())+ ".txt"));
         text.setEnd("Finished text buffer");
 
         System.out.println(text);
 
         TimeStamp bin = new TimeStamp();
         bin.setBegin("Starting binary no buffer");
-        ew.writeToBinaryFile(false, "NoBuf.ser");
+        ew.writeToBinaryFile(false, "NoBuf_Level_" + Integer.toString(kf.getLevel())+ ".ser");
         bin.setEndBegin("Finished binary no buffer, starting binary buffer");
-        ew.writeToBinaryFile(true, "WithBuf.ser");
+        ew.writeToBinaryFile(true, "WithBuf_Level_" + Integer.toString(kf.getLevel()) + ".ser");
         bin.setEnd("Finished binary buffer");
 
         System.out.println(bin);

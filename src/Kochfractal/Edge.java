@@ -36,13 +36,7 @@ public class Edge implements Serializable {
 
     @Override
     public String toString() {
-        return "Edge{" +
-                "X1=" + X1 +
-                ", Y1=" + Y1 +
-                ", X2=" + X2 +
-                ", Y2=" + Y2 +
-                ", color=" + color +
-                '}';
+        return X1 + "," + Y1 + "," + X2 + "," + Y2 + "," + color;
     }
 
 }
