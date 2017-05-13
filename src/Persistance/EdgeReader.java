@@ -19,20 +19,34 @@ public class EdgeReader {
 
     public void readFromTextFile(boolean useBuffer, File file) {
         edges.clear();
-        try(Scanner c = new Scanner(file)) {
-            while(c.hasNextLine()){
+        Scanner c = null;
+        if (!useBuffer) {
+            try {
+                c = new Scanner(file);
+            } catch (IOException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        } else {
+            try {
+                c = new Scanner(new BufferedReader(new FileReader(file)));
+            } catch (IOException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        }
+
+        try {
+            while (c.hasNextLine()) {
                 String[] result = c.next().split(",");
                 for (String s : result) {
                     System.out.println(s);
                 }
-                Edge e = new Edge(Double.parseDouble(result[0]), Double.parseDouble(result[1]),Double.parseDouble(result[2]),Double.parseDouble(result[3]), Color.web(result[4]));
+                Edge e = new Edge(Double.parseDouble(result[0]), Double.parseDouble(result[1]), Double.parseDouble(result[2]), Double.parseDouble(result[3]), Color.web(result[4]));
                 edges.add(e);
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             LOGGER.severe(e.getMessage());
         }
-
         System.out.println(edges.size() + " edges found!");
     }
 

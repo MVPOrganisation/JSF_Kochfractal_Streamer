@@ -16,9 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -26,6 +24,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  *
@@ -208,7 +207,7 @@ public class JSF31KochFractalFX extends Application {
             File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
             if (file != null) {
                 System.out.println(file.getAbsolutePath());
-                er.readFromTextFile(false, file);
+                er.readFromTextFile(showDIalog(), file);
                 requestDrawEdges();
             }
         }
@@ -236,6 +235,28 @@ public class JSF31KochFractalFX extends Application {
                 e.X2 * zoom + zoomTranslateX,
                 e.Y2 * zoom + zoomTranslateY,
                 e.color);
+    }
+
+    private boolean showDIalog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Buffer usage");
+        alert.setHeaderText("Buffer");
+        alert.setContentText("Do you ant to use a buffer while reading the file?");
+
+        ButtonType buttonTypeYes = new ButtonType("Yes");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeYes){
+            return true;
+        } else if (result.get() == buttonTypeNo) {
+            return false;
+        } else {
+            return false;
+        }
     }
 
     /**
