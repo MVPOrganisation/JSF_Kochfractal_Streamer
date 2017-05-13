@@ -8,7 +8,6 @@ import Kochfractal.Edge;
 import Persistance.EdgeReader;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -113,15 +112,15 @@ public class JSF31KochFractalFX extends Application {
         grid.add(buttonReadFile, 3, 6);
 
         // Button to decrease level of Koch fractal
-        Button buttonDecreaseLevel = new Button();
-        buttonDecreaseLevel.setText("Decrease Level");
-        buttonDecreaseLevel.setOnAction(new EventHandler<ActionEvent>() {
+        Button buttonReadBinaryFile = new Button();
+        buttonReadBinaryFile.setText("read binary file");
+        buttonReadBinaryFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                decreaseLevelButtonActionPerformed(event);
+                readBinaryFileButtonActionPerformed(event);
             }
         });
-        grid.add(buttonDecreaseLevel, 5, 6);
+        grid.add(buttonReadBinaryFile, 5, 6);
 
         // Button to clear screen
         Button buttonClearScreen = new Button();
@@ -213,11 +212,19 @@ public class JSF31KochFractalFX extends Application {
         }
     } 
     
-    private void decreaseLevelButtonActionPerformed(ActionEvent event) {
-        if (currentLevel > 1) {
+    private void readBinaryFileButtonActionPerformed(ActionEvent event) {
+        if (currentLevel < 12) {
             // resetZoom();
-            currentLevel--;
+            currentLevel++;
             labelLevel.setText("Level: " + currentLevel);
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
+            if (file != null) {
+                System.out.println(file.getAbsolutePath());
+                er.readFromBinaryFile(showDIalog(), file);
+                requestDrawEdges();
+            }
         }
     }
 

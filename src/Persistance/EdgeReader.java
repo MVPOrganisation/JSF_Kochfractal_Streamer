@@ -50,6 +50,32 @@ public class EdgeReader {
         System.out.println(edges.size() + " edges found!");
     }
 
+    public void readFromBinaryFile(boolean useBuffer, File file) {
+        ObjectInputStream stream = null;
+
+        if(useBuffer) {
+            try {
+                stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+            } catch (IOException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        } else {
+            try {
+                stream = new ObjectInputStream(new FileInputStream(file));
+            } catch (IOException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        }
+
+        if(stream != null) {
+            try {
+                edges.add((Edge) stream.readObject());
+            } catch (IOException | ClassNotFoundException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        }
+    }
+
     public ArrayList<Edge> getEdges() {
         return edges;
     }
