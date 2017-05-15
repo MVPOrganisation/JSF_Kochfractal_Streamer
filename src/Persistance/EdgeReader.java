@@ -2,6 +2,7 @@ package Persistance;
 
 import Kochfractal.Edge;
 import javafx.scene.paint.Color;
+import timeutil.TimeStamp;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,28 +19,32 @@ public class EdgeReader {
     private static final Logger LOGGER = Logger.getLogger(EdgeReader.class.getName());
 
     public void readFromTextFile(boolean useBuffer, File file) {
+        TimeStamp ts = new TimeStamp();
         edges.clear();
         Scanner c = null;
         if (!useBuffer) {
             try {
                 c = new Scanner(file);
+                ts.setBegin("Start reading from text without buffer");
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
         } else {
             try {
                 c = new Scanner(new BufferedReader(new FileReader(file)));
+                ts.setBegin("Start reading from text with buffer");
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
         }
 
         try {
+            assert c != null;
             while (c.hasNextLine()) {
                 String[] result = c.next().split(",");
-                for (String s : result) {
-                    System.out.println(s);
-                }
+//                for (String s : result) {
+//                    System.out.println(s);
+//                }
                 Edge e = new Edge(Double.parseDouble(result[0]), Double.parseDouble(result[1]), Double.parseDouble(result[2]), Double.parseDouble(result[3]), Color.web(result[4]));
                 edges.add(e);
             }
@@ -47,21 +52,28 @@ public class EdgeReader {
             e.printStackTrace();
             LOGGER.severe(e.getMessage());
         }
+        ts.setEnd("Finished reading text file");
+        System.out.println(ts.toString());
         System.out.println(edges.size() + " edges found!");
     }
 
     public void readFromBinaryFile(boolean useBuffer, File file) {
+        TimeStamp ts = new TimeStamp();
+        edges.clear();
         ObjectInputStream stream = null;
+        ArrayList<EdgeData> edgeData = new ArrayList<>();
 
         if(useBuffer) {
             try {
                 stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+                ts.setBegin("Start reading from binary without buffer");
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
         } else {
             try {
                 stream = new ObjectInputStream(new FileInputStream(file));
+                ts.setBegin("Start reading from binary without buffer");
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
@@ -69,9 +81,16 @@ public class EdgeReader {
 
         if(stream != null) {
             try {
-                edges.add((Edge) stream.readObject());
+                edgeData = (ArrayList<EdgeData>) stream.readObject();
+                ts.setEnd("Finished reading binary file");
+                System.out.println(ts.toString());
             } catch (IOException | ClassNotFoundException e) {
                 LOGGER.severe(e.getMessage());
+            }
+
+            for(EdgeData ed :edgeData) {
+                Edge e = new Edge(ed);
+                edges.add(e);
             }
         }
     }

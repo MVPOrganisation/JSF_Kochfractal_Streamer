@@ -45,12 +45,15 @@ public class EdgeWriter implements Observer {
     }
 
     public void writeToBinaryFile(boolean useBuffer, String file) {
+        ArrayList<EdgeData> edgeDataList = new ArrayList<>();
+
         if(!useBuffer) {
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
                 for (Edge e : edges) {
                     EdgeData ed = new EdgeData(e);
-                    oos.writeObject(ed);
+                    edgeDataList.add(ed);
                 }
+                oos.writeObject(edgeDataList);
             } catch (IOException ex) {
                 LOGGER.severe(ex.getMessage());
             }
@@ -58,8 +61,9 @@ public class EdgeWriter implements Observer {
             try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream (new FileOutputStream(file)))) {
                 for (Edge e : edges) {
                     EdgeData ed = new EdgeData(e);
-                    oos.writeObject(ed);
+                    edgeDataList.add(ed);
                 }
+                oos.writeObject(edgeDataList);
             }catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
