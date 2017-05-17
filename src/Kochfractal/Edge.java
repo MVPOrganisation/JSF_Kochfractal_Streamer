@@ -18,6 +18,10 @@ public class Edge implements Serializable {
     public double X1, Y1, X2, Y2;
     public Color color;
 
+    public Edge() {
+
+    }
+
     public Edge(double X1, double Y1, double X2, double Y2, Color color) {
         this.X1 = X1;
         this.Y1 = Y1;
@@ -32,6 +36,10 @@ public class Edge implements Serializable {
         X2 = e.X2;
         Y2 = e.Y2;
         color = new Color(e.Red, e.Green, e.Blue, 1);
+    }
+
+    public void setColor(double r, double g, double b) {
+        this.color = new Color(r, g ,b, 1);
     }
 
     @Override

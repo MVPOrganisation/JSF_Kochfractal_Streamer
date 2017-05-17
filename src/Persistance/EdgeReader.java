@@ -5,8 +5,11 @@ import javafx.scene.paint.Color;
 import timeutil.TimeStamp;
 
 import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -48,7 +51,9 @@ public class EdgeReader {
                 Edge e = new Edge(Double.parseDouble(result[0]), Double.parseDouble(result[1]), Double.parseDouble(result[2]), Double.parseDouble(result[3]), Color.web(result[4]));
                 edges.add(e);
             }
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
+            LOGGER.severe(e.getMessage());
+        } catch(Exception e) {
             e.printStackTrace();
             LOGGER.severe(e.getMessage());
         }
@@ -93,6 +98,40 @@ public class EdgeReader {
                 edges.add(e);
             }
         }
+    }
+
+    public void readFromMappedFile(String fileName) {
+        File file = new File(fileName);
+        edges.clear();
+
+        FileChannel fileChannel = null;
+        MappedByteBuffer buffer = null;
+        try {
+            fileChannel = new RandomAccessFile(file, "r").getChannel();
+            buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // the buffer now reads the file as if it were loaded in memory.
+        assert buffer != null;
+
+        //You can read the file from this buffer the way you like.
+        while(buffer.hasRemaining())
+        {
+            Edge e = new Edge();
+            e.X1 = buffer.getDouble();
+            e.Y1 = buffer.getDouble();
+            e.X2 = buffer.getDouble();
+            e.Y2 = buffer.getDouble();
+            double r = buffer.getDouble();
+            double g = buffer.getDouble();
+            double b = buffer.getDouble();
+            e.setColor(r,g,b);
+            edges.add(e);
+        }
+
+        System.out.println(edges.size() + " edges found!");
     }
 
     public ArrayList<Edge> getEdges() {

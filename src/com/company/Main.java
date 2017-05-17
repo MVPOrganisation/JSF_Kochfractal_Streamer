@@ -36,23 +36,14 @@ public class Main {
         kf.generateLeftEdge();
         kf.generateRightEdge();
 
-        TimeStamp text = new TimeStamp();
-        text.setBegin("Starting text no buffer");
-        ew.writeToTextFile(null, false, ("NoBuf_Level_" + Integer.toString(kf.getLevel()) + ".txt"));
-        text.setEndBegin("Finished text no buffer, starting text buffer");
-        ew.writeToTextFile(null, true, ("WithBuf_Level_" + Integer.toString(kf.getLevel())+ ".txt"));
-        text.setEnd("Finished text buffer");
+        TimeStamp ts = new TimeStamp();
+        ts.setBegin("Start mapped");
+        ew.writeToMappedFile(true, "mapped_8.txt");
+        ts.setEndBegin("Finished mapped, start bin");
 
-        System.out.println(text);
-
-        TimeStamp bin = new TimeStamp();
-        bin.setBegin("Starting binary no buffer");
-        ew.writeToBinaryFile(false, "NoBuf_Level_" + Integer.toString(kf.getLevel())+ ".ser");
-        bin.setEndBegin("Finished binary no buffer, starting binary buffer");
-        ew.writeToBinaryFile(true, "WithBuf_Level_" + Integer.toString(kf.getLevel()) + ".ser");
-        bin.setEnd("Finished binary buffer");
-
-        System.out.println(bin);
+        ew.writeToBinaryFile(false, "binary_8.ser");
+        ts.setEnd("Finished bin");
+        System.out.println(ts.toString());
 
         System.out.println("Finished");
     }

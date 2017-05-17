@@ -20,9 +20,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import timeutil.TimeStamp;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -54,8 +56,8 @@ public class JSF31KochFractalFX extends Application {
 
     // Koch panel and its size
     private Canvas kochPanel;
-    private final int kpWidth = 800;
-    private final int kpHeight = 800;
+    private final int kpWidth = 600;
+    private final int kpHeight = 600;
 
     // Edge file reader
     private EdgeReader er = new EdgeReader();
@@ -142,10 +144,18 @@ public class JSF31KochFractalFX extends Application {
         primaryStage.setTitle("Koch Fractal");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        //clearKochPanel();
     }
 
     private void clearButtonActionPerformed(ActionEvent event) {
-        clearKochPanel();
+        //clearKochPanel();
+        TimeStamp ts = new TimeStamp();
+        ts.setBegin("Start mapped");
+        er.readFromMappedFile("mapped_8.txt");
+        ts.setEnd("finished mapped");
+        System.out.println(ts.toString());
+        requestDrawEdges();
     }
 
     private void clearKochPanel() {
@@ -177,21 +187,14 @@ public class JSF31KochFractalFX extends Application {
         Platform.runLater(new Runnable(){
             @Override
             public void run() {
+                System.out.println("Drawing edges");
                 resetZoom();
                 clearKochPanel();
                 ArrayList<Edge> edges = er.getEdges();
                 for (Edge e: edges) {
+                    //System.out.println(e);
                     drawEdge(e);
                 }
-            }
-        });
-    }
-
-    public void requestDrawTempEdge(Edge e) {
-        Platform.runLater(new Runnable(){
-            @Override
-            public void run() {
-                // TODO
             }
         });
     }
@@ -205,9 +208,15 @@ public class JSF31KochFractalFX extends Application {
             fileChooser.setTitle("Open Resource File");
             File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
             if (file != null) {
-                System.out.println(file.getAbsolutePath());
-                er.readFromTextFile(showDIalog(), file);
-                requestDrawEdges();
+                if(Objects.equals(getFileExtension(file), "txt")) {
+                    System.out.println(file.getAbsolutePath());
+                    er.readFromTextFile(showDIalog(), file);
+                    requestDrawEdges();
+                } else if (Objects.equals(getFileExtension(file), "ser")) {
+                    System.out.println(file.getAbsolutePath());
+                    er.readFromBinaryFile(showDIalog(), file);
+                    requestDrawEdges();
+                }
             }
         }
     } 
@@ -221,9 +230,6 @@ public class JSF31KochFractalFX extends Application {
             fileChooser.setTitle("Open Resource File");
             File file = fileChooser.showOpenDialog(((Node) event.getSource()).getScene().getWindow());
             if (file != null) {
-                System.out.println(file.getAbsolutePath());
-                er.readFromBinaryFile(showDIalog(), file);
-                requestDrawEdges();
             }
         }
     }
@@ -248,7 +254,7 @@ public class JSF31KochFractalFX extends Application {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Buffer usage");
         alert.setHeaderText("Buffer");
-        alert.setContentText("Do you ant to use a buffer while reading the file?");
+        alert.setContentText("Do you want to use a buffer while reading the file?");
 
         ButtonType buttonTypeYes = new ButtonType("Yes");
         ButtonType buttonTypeNo = new ButtonType("No");
@@ -263,6 +269,17 @@ public class JSF31KochFractalFX extends Application {
             return false;
         } else {
             return false;
+        }
+    }
+
+    // Code example from: http://stackoverflow.com/questions/3571223/how-do-i-get-the-file-extension-of-a-file-in-java
+    private String getFileExtension(File file) {
+        String name = file.getName();
+        try {
+            System.out.println(name.substring(name.lastIndexOf(".") + 1));
+            return name.substring(name.lastIndexOf(".") + 1);
+        } catch (Exception e) {
+            return "";
         }
     }
 
