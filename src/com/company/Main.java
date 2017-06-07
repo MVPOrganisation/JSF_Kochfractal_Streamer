@@ -38,13 +38,14 @@ public class Main {
 
         TimeStamp ts = new TimeStamp();
         ts.setBegin("Start mapped");
-        ew.writeToMappedFile(true, "mapped_8.txt");
+        ew.writeToMappedFile(true, "export\\mapped.bin", kf.getLevel());
         ts.setEndBegin("Finished mapped, start bin");
 
-        ew.writeToBinaryFile(false, "binary_8.ser");
+        //ew.writeToBinaryFile(false, "binary_8.ser");
         ts.setEnd("Finished bin");
         System.out.println(ts.toString());
 
+        //ew.writeToTextFile(true, "export\\Text_test.txt");
         System.out.println("Finished");
     }
 }

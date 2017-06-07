@@ -6,6 +6,7 @@ package com.company;
 
 import Kochfractal.Edge;
 import Persistance.EdgeReader;
+import Persistance.SimpleWatchService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 import timeutil.TimeStamp;
 
 import java.io.File;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -146,6 +148,8 @@ public class JSF31KochFractalFX extends Application {
         primaryStage.show();
 
         //clearKochPanel();
+
+        new SimpleWatchService(this).start();
     }
 
     private void clearButtonActionPerformed(ActionEvent event) {
@@ -281,6 +285,11 @@ public class JSF31KochFractalFX extends Application {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public void readfileFromWatcher() {
+        er.readFromTextFile(true, new File("export\\Text_test_completed.txt"));
+        requestDrawEdges();
     }
 
     /**
