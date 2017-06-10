@@ -33,7 +33,7 @@ import java.util.Optional;
  *
  * @author Nico Kuijpers
  */
-public class JSF31KochFractalFX extends Application {
+public class JSF31KochFractalFXReader extends Application {
     
     // Zoom and drag
     private double zoomTranslateX = 0.0;

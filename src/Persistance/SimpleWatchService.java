@@ -1,6 +1,6 @@
 package Persistance;
 
-import com.company.JSF31KochFractalFX;
+import com.company.JSF31KochFractalFXReader;
 
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SimpleWatchService extends Thread {
 
-    JSF31KochFractalFX reference = null;
+    JSF31KochFractalFXReader reference = null;
     private AtomicBoolean stop = new AtomicBoolean(false);
 
 
@@ -25,7 +25,7 @@ public class SimpleWatchService extends Thread {
         reference.readfileFromWatcher();
     }
 
-    public SimpleWatchService(JSF31KochFractalFX app) {
+    public SimpleWatchService(JSF31KochFractalFXReader app) {
         this.reference = app;
     }
 
