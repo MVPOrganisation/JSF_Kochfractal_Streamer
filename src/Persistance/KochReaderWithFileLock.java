@@ -15,7 +15,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
 /**
- * @author bob
+ * Created by Max Meijer on 07/06/2017.
+ * Fontys University of Applied Sciences, Eindhoven
  */
 public class KochReaderWithFileLock implements Runnable {
 
