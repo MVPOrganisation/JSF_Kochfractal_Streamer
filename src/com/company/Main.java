@@ -38,7 +38,7 @@ public class Main {
 
         TimeStamp ts = new TimeStamp();
         ts.setBegin("Start mapped");
-        ew.writeToMappedFile(true, "export\\mapped.bin", kf.getLevel());
+        ew.writeToMappedFile("export\\mapped.dat");
         ts.setEndBegin("Finished mapped, start bin");
 
         //ew.writeToBinaryFile(false, "binary_8.ser");

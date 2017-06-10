@@ -149,8 +149,6 @@ public class JSF31KochFractalFXWriter extends Application {
         primaryStage.show();
 
         //clearKochPanel();
-
-        new SimpleWatchService(this).start();
     }
 
     private void clearButtonActionPerformed(ActionEvent event) {

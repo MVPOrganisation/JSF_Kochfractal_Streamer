@@ -21,22 +21,23 @@ public class SimpleWatchService extends Thread {
 
     public void doOnChange() {
         // Do whatever action you want here
-        System.out.println("Did me a change");
-        reference.readfileFromWatcher();
+        // System.out.println("Did me a change");
+        reference.fileIsReader();
     }
 
     public SimpleWatchService(JSF31KochFractalFXReader app) {
+        //System.out.println("Initialising watch service");
         this.reference = app;
     }
 
     @Override
     public void run() {
         try (WatchService watcher = FileSystems.getDefault().newWatchService()) {
-            Path path = Paths.get("C:\\Users\\max1_\\Source\\Repos\\Semester 3\\JSF_Kochfractal_Streamer\\export");
+            Path path = Paths.get("C:\\Users\\Max\\Source\\Repos\\Semester 3\\JSF_Kochfractal_Streamer\\export");
             path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
             while (!isStopped()) {
                 WatchKey key;
-                try { key = watcher.poll(1, TimeUnit.MILLISECONDS); }
+                try { key = watcher.poll(25, TimeUnit.MILLISECONDS); }
                 catch (InterruptedException e) { return; }
                 if (key == null) { Thread.yield(); continue; }
 
@@ -47,14 +48,15 @@ public class SimpleWatchService extends Thread {
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;
                     Path filename = ev.context();
 
-                    System.out.println(filename.toString());
-                    System.out.println(kind);
-
-                    if (filename.toString().equals("Text_test_completed.txt")) {
-                        System.out.println("changed");
+                    if (kind == StandardWatchEventKinds.OVERFLOW) {
+                        Thread.yield();
+                        continue;
+                    } else if (kind == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY ||
+                            kind == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE ) {
+                        System.out.println("File is changed.");
                         doOnChange();
+                        break;
                     }
-
                     boolean valid = key.reset();
                     if (!valid) { break; }
                 }

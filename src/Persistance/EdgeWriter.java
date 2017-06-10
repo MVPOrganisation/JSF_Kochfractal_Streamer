@@ -1,6 +1,7 @@
 package Persistance;
 
 import Kochfractal.Edge;
+import timeutil.TimeStamp;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
@@ -9,6 +10,7 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Observer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static javax.xml.crypto.dsig.CanonicalizationMethod.EXCLUSIVE;
@@ -21,6 +23,8 @@ public class EdgeWriter implements Observer {
 
     private ArrayList<Edge> edges = new ArrayList<>();
     private static final Logger LOGGER = Logger.getLogger(EdgeWriter.class.getName());
+    private int fileSize = 20971520; //20MB
+    private final int EDGE_BYTE_SIZE = 8*7;
 
     @Override
     public void update(java.util.Observable o, Object arg) {
@@ -76,43 +80,53 @@ public class EdgeWriter implements Observer {
         }
     }
 
-    public void writeToMappedFile(boolean useBuffer, String fileName, int level) {
-        try {
-            System.out.println("Start Writing");
+    public void writeToMappedFile(String fileName) {
+        TimeStamp timeStamp = new TimeStamp();
+        timeStamp.setBegin("Start - Write Mapped");
+        try
+        {
+            RandomAccessFile memoryMappedFile = new RandomAccessFile(fileName, "rw");
+            MappedByteBuffer out = memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, 4);
+            FileLock exclusiveLock = null;
 
-            File file = new File(fileName);
-            if (file.exists())
-                file.delete();
-            file.createNewFile();
+            final int EDGECOUNT = edges.size();
+            System.out.println("Number of Edges: " + EDGECOUNT);
+            out.putInt(EDGECOUNT);
 
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            FileChannel fc = raf.getChannel();
+            for (int i = 0; i <  EDGECOUNT; i++) {
+                int writePos = 8 + EDGE_BYTE_SIZE*i;
+                System.out.format("Writing to position: %1$s\n", writePos);
+                out = memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, writePos, EDGE_BYTE_SIZE);
+                exclusiveLock = memoryMappedFile.getChannel().lock(writePos, EDGE_BYTE_SIZE, false);
 
-            FileLock lock;
+                Edge e = edges.get(i);
+                EdgeData eD = new EdgeData(e);
+                out.putDouble(eD.X1);
+                out.putDouble(eD.Y1);
+                out.putDouble(eD.X2);
+                out.putDouble(eD.Y2);
+                out.putDouble(eD.Red);
+                out.putDouble(eD.Green);
+                out.putDouble(eD.Blue);
 
-            raf.writeInt(level);
-            raf.writeBytes("\n");
-
-            String line = "";
-            for (Edge e : edges) {
-                line = "";
-                line += e.X1 + ";";
-                line += e.Y1 + ";";
-                line += e.X2 + ";";
-                line += e.Y2 + ";";
-                line += e.color.getRed() + ",";
-                line += e.color.getGreen() + ",";
-                line += e.color.getBlue() + "\n";
-
-                lock = fc.lock(raf.length(), line.getBytes().length, false);
-                raf.writeBytes(line);
-                lock.release();
+                exclusiveLock.release();
+                out = memoryMappedFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 4, 4);
+                exclusiveLock = memoryMappedFile.getChannel().lock(4, 4, true);
+                out.putInt(i);
+                exclusiveLock.release();
             }
+            memoryMappedFile.getChannel().close();
+            memoryMappedFile.close();
 
-            raf.close();
-        } catch (Exception w) {
-            w.printStackTrace();
+
+
         }
+        catch (Exception ex)
+        {
+            Logger.getLogger(EdgeWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        timeStamp.setEnd("Stop - Write Mapped");
+        System.out.println(timeStamp.toString());
 
 
     }

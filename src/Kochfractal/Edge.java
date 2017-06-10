@@ -38,6 +38,14 @@ public class Edge implements Serializable {
         color = new Color(e.Red, e.Green, e.Blue, 1);
     }
 
+    public Edge(double x1, double y1, double x2, double y2, double r, double g, double b) {
+        this.X1 = x1;
+        this.Y1 = y1;
+        this.X2 = x2;
+        this.Y2 = y2;
+        color = new Color(r,g,b, 1);
+    }
+
     public void setColor(double r, double g, double b) {
         this.color = new Color(r, g ,b, 1);
     }

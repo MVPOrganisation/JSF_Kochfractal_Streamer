@@ -6,6 +6,7 @@ package com.company;
 
 import Kochfractal.Edge;
 import Persistance.EdgeReader;
+import Persistance.KochReaderWithFileLock;
 import Persistance.SimpleWatchService;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -33,6 +34,7 @@ import java.util.Optional;
  *
  * @author Nico Kuijpers
  */
+@SuppressWarnings("ALL")
 public class JSF31KochFractalFXReader extends Application {
     
     // Zoom and drag
@@ -64,6 +66,7 @@ public class JSF31KochFractalFXReader extends Application {
     // Edge file reader
     private EdgeReader er = new EdgeReader();
 
+    private SimpleWatchService watcher;
     @Override
     public void start(Stage primaryStage) {
        
@@ -143,7 +146,7 @@ public class JSF31KochFractalFXReader extends Application {
         root.getChildren().add(grid);
         
         // Define title and assign the scene for main window
-        primaryStage.setTitle("Koch Fractal");
+        primaryStage.setTitle("Koch Fractal Reader");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -199,6 +202,17 @@ public class JSF31KochFractalFXReader extends Application {
                     //System.out.println(e);
                     drawEdge(e);
                 }
+            }
+        });
+    }
+
+    public void requestDrawEdge(Edge e) {
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run() {
+                System.out.println("Drawing edge");
+                resetZoom();
+                drawEdge(e);
             }
         });
     }
@@ -288,8 +302,20 @@ public class JSF31KochFractalFXReader extends Application {
     }
 
     public void readfileFromWatcher() {
-        er.readFromTextFile(true, new File("export\\Text_test_completed.txt"));
+        er.readFromTextFile(true, new File("export\\mapped.bin"));
         requestDrawEdges();
+    }
+
+    public void fileIsReader(){
+        clearKochPanel();
+        Thread t1 = new Thread(new KochReaderWithFileLock(this));
+        t1.start();
+    }
+
+    public void startWatching(){
+        watcher = null;
+        watcher = new SimpleWatchService(this);
+        watcher.start();
     }
 
     /**
