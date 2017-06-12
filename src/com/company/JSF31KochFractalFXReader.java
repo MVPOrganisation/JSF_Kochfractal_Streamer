@@ -6,7 +6,7 @@ package com.company;
 
 import Kochfractal.Edge;
 import Persistance.EdgeReader;
-import Persistance.KochReaderWithFileLock;
+import Persistance.MappedFileWithLockReader;
 import Persistance.SimpleWatchService;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -25,7 +25,6 @@ import javafx.stage.Stage;
 import timeutil.TimeStamp;
 
 import java.io.File;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -308,7 +307,7 @@ public class JSF31KochFractalFXReader extends Application {
 
     public void fileIsReader(){
         clearKochPanel();
-        Thread t1 = new Thread(new KochReaderWithFileLock(this));
+        Thread t1 = new Thread(new MappedFileWithLockReader(this));
         t1.start();
     }
 

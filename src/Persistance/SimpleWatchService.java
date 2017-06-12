@@ -5,6 +5,7 @@ import com.company.JSF31KochFractalFXReader;
 import java.nio.file.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 /**
  * Created by Max Meijer on 07/06/2017.
@@ -19,14 +20,11 @@ public class SimpleWatchService extends Thread {
     public boolean isStopped() { return stop.get(); }
     public void stopThread() { stop.set(true); }
 
-    public void doOnChange() {
-        // Do whatever action you want here
-        // System.out.println("Did me a change");
+    public void fileChangeEvent() {
         reference.fileIsReader();
     }
 
     public SimpleWatchService(JSF31KochFractalFXReader app) {
-        //System.out.println("Initialising watch service");
         this.reference = app;
     }
 
@@ -54,7 +52,7 @@ public class SimpleWatchService extends Thread {
                     } else if (kind == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY ||
                             kind == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE ) {
                         System.out.println("File is changed.");
-                        doOnChange();
+                        fileChangeEvent();
                         break;
                     }
                     boolean valid = key.reset();
@@ -63,7 +61,7 @@ public class SimpleWatchService extends Thread {
                 Thread.yield();
             }
         } catch (Throwable e) {
-            // Log or rethrow the error
+            Logger.getLogger(SimpleWatchService.class.getName()).severe(e.getLocalizedMessage());
         }
     }
 }

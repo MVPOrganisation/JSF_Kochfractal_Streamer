@@ -18,14 +18,14 @@ import java.nio.channels.FileLock;
  * Created by Max Meijer on 07/06/2017.
  * Fontys University of Applied Sciences, Eindhoven
  */
-public class KochReaderWithFileLock implements Runnable {
+public class MappedFileWithLockReader implements Runnable {
 
     private static final String MAPPEDKOCHPATH = "C:\\Users\\Max\\Source\\Repos\\Semester 3\\JSF_Kochfractal_Streamer\\export\\mapped.dat";
     private static final int FILESIZE = 20971520; //20MB
     private final int EDGE_BYTE_SIZE = 8 * 7;
     private JSF31KochFractalFXReader reader;
 
-    public KochReaderWithFileLock(JSF31KochFractalFXReader manager) {
+    public MappedFileWithLockReader(JSF31KochFractalFXReader manager) {
         this.reader = manager;
     }
 
@@ -54,7 +54,6 @@ public class KochReaderWithFileLock implements Runnable {
                 Edge e = new Edge(in.getDouble(), in.getDouble(),
                         in.getDouble(), in.getDouble(),
                         in.getDouble(), in.getDouble(), in.getDouble());
-                System.out.println(e.toString());
                 this.reader.requestDrawEdge(e);
                 lock.release();
             }
@@ -67,23 +66,4 @@ public class KochReaderWithFileLock implements Runnable {
         }
 
     }
-
-    public void deleteFile() {
-        try {
-
-            File file = new File(MAPPEDKOCHPATH);
-
-            if (file.delete()) {
-                System.out.println(file.getName() + " is deleted!");
-            } else {
-                System.out.println("Delete operation is failed.");
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-    }
-
 }
